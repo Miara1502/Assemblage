@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-
 import argparse
 import sys
 import pprint
+import networkx as nx
 
 
 parser = argparse.ArgumentParser(description="Debruij algo, main program.")
@@ -51,7 +51,23 @@ def dico_kmer(fastq , taille_kmer):
         dico[kmer] += 1
     return dico
 
-# MAIN :     
+##  b) Construction de l'arbre :
+def build_graph(dico_kmer) :
+    G = nx.DiGraph()
+    for i , (kmer, nb) in enumerate(dico_kmer.items()):
+        node1 = kmer[:-1]
+        node2 = kmer[1:]
+        G.add_edge(node1 , node2 , weight = nb)
+    return G
+
+
+
+
+# MAIN :
 file = args.fastq
 dic = dico_kmer(file , 3)
 print(dic)
+
+
+graph = build_graph(dic)
+print(type(graph))
