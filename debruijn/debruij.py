@@ -30,7 +30,7 @@ args = parser.parse_args()
 def read_fastq(fastq):
     fastq_file = open(fastq)
     for line in fastq_file:
-        yield fastq_file.readline()
+        yield fastq_file.readline().strip('\n')
         seq_id = fastq_file.readline()
         seq = fastq_file.readline().strip('\n')
 
@@ -57,17 +57,42 @@ def build_graph(dico_kmer) :
     for i , (kmer, nb) in enumerate(dico_kmer.items()):
         node1 = kmer[:-1]
         node2 = kmer[1:]
+        #print(node1, node2, nb)
         G.add_edge(node1 , node2 , weight = nb)
     return G
 
 
+def starting_nodes(graph) :
+    list_entre = []
+    for node in graph :
+        pred = list(graph.predecessors(node))
+        if (not pred) :
+            #print("Pas de predecesseur\n")
+            list_entre.append(node)
+    return list_entre
+
+def sink_nodes(graph) :
+    list_sorite = []
+    for node in graph :
+        pred = list(graph.successors(node))
+        if (not pred) :
+            #print("Pas de successeurs\n")
+            list_entre.append(node)
+    return list_sortie
 
 
-# MAIN :
+################################# MAIN ##################################
 file = args.fastq
-dic = dico_kmer(file , 3)
-print(dic)
+dic = dico_kmer(file , 21)
+#print(dic)
+
+g = build_graph(dic)
+print(type(g))
 
 
-graph = build_graph(dic)
-print(type(graph))
+entree = starting_nodes(g)
+sortie = sink_nodes(g)
+print('Liste des noeuds d entrée')
+print(entree)
+print('Liste des noeuds de sortie')
+print(sortie)
