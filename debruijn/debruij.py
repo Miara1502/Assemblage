@@ -45,6 +45,7 @@ def cut_kmer(fastq, taille_kmer):
 
 def dico_kmer(fastq , taille_kmer):
     it = cut_kmer(fastq , taille_kmer)
+    #seq = next(it)
     dico = {}
     for kmer in it:
         if kmer not in dico :
@@ -88,8 +89,6 @@ def get_contigs(graph , noeud_entre , noeud_sortie) :
         liste_path = []
         for j in noeud_sortie :
             path = list(nx.all_simple_paths(graph , i , j))
-
-            print('HELLO\n')
             tuple  = (path , len(path[0]))
             liste_path.append(tuple)
     return liste_path
@@ -97,9 +96,9 @@ def get_contigs(graph , noeud_entre , noeud_sortie) :
 
 ################################# MAIN ##################################
 file = args.fastq
-nb = args.sKmer
-dic = dico_kmer(file , nb)
 
+dic = dico_kmer(file , 10)
+print(dic)
 g = build_graph(dic)
 
 
