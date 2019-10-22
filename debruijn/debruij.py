@@ -33,6 +33,7 @@ def read_fastq(fastq):
         yield fastq_file.readline().strip('\n')
         seq_id = fastq_file.readline()
         seq = fastq_file.readline().strip('\n')
+    fastq_file.close()
 
 def cut_kmer(fastq, taille_kmer):
     it = read_fastq(fastq)
@@ -72,27 +73,52 @@ def starting_nodes(graph) :
     return list_entre
 
 def sink_nodes(graph) :
-    list_sorite = []
+    list_sortie = []
     for node in graph :
         pred = list(graph.successors(node))
         if (not pred) :
             #print("Pas de successeurs\n")
-            list_entre.append(node)
+            list_sortie.append(node)
     return list_sortie
+
+def get_contigs(graph , noeud_entre , noeud_sortie) :
+    '''Retourne (contig , taille du contig)
+    '''
+    for i in noeud_entre :
+        liste_path = []
+        for j in noeud_sortie :
+            path = list(nx.all_simple_paths(graph , i , j))
+
+            print('HELLO\n')
+            tuple  = (path , len(path[0]))
+            liste_path.append(tuple)
+    return liste_path
 
 
 ################################# MAIN ##################################
 file = args.fastq
-dic = dico_kmer(file , 21)
-#print(dic)
+nb = args.sKmer
+dic = dico_kmer(file , nb)
 
 g = build_graph(dic)
-print(type(g))
 
 
 entree = starting_nodes(g)
 sortie = sink_nodes(g)
-print('Liste des noeuds d entrée')
+print('Liste des noeuds d entrée : ')
 print(entree)
-print('Liste des noeuds de sortie')
+print('\n')
+print('Liste des noeuds de sortie : ')
 print(sortie)
+
+
+#Contigs :
+
+contig = get_contigs(g , entree , sortie)
+print(contig)
+'''
+path = list(nx.all_simple_paths(g , entree[0] , sortie[0]))
+
+print(path)
+print(len(path[0]))
+'''
