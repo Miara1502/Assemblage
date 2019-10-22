@@ -10,16 +10,17 @@ parser = argparse.ArgumentParser(description="Debruij algo, main program.")
 
 parser.add_argument("-i", "--fastq", type=argparse.FileType('r'),
                     help='Path to the fastq file single end',
-                    dest="fastq", metavar="fastq_file")
+                    dest="fastq", metavar="fastq--file")
 parser.add_argument("-k", "--kmer-size", help="size of the Kmer --DEFAULT = 21",
-                    type=int, default=21, dest="sKmer", metavar="size_Kmer")
+                    type=int, default=21, dest="sKmer", metavar="size--Kmer")
 parser.add_argument("-r", "--reference-genome", type=argparse.FileType('r'),
                     help='path to the file containing the reference genome ',
-                     dest="geneRef", metavar="reference_genome")
+                     dest="geneRef", metavar="reference--genome")
 parser.add_argument("-o", "--config-file", type=argparse.FileType('r'),
                     help='path to the file containing the config file ',
-                     dest="config", metavar="config_file")
+                     dest="config", metavar="config--file")
 
 args = parser.parse_args()
 
 #Utiliser les librairies networkx, pytest et pyllint de Python:
+#1° CREATION DU GRAPHE de DE BRUIJN
