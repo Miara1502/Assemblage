@@ -4,7 +4,7 @@ import argparse
 import sys
 import pprint
 import networkx as nx
-
+from networkx import algorithms
 
 parser = argparse.ArgumentParser(description="Debruij algo, main program.")
 
@@ -81,10 +81,10 @@ def sink_nodes(graph) :
             #print("Pas de successeurs\n")
             list_sortie.append(node)
     return list_sortie
-
+'''
 def get_contigs(graph , noeud_entre , noeud_sortie) :
-    '''Retourne (contig , taille du contig)
-    '''
+    #Retourne (contig , taille du contig)
+
     for i in noeud_entre :
         liste_path = []
         for j in noeud_sortie :
@@ -92,12 +92,33 @@ def get_contigs(graph , noeud_entre , noeud_sortie) :
             tuple  = (path , len(path[0]))
             liste_path.append(tuple)
     return liste_path
+'''
+
+
+
+def get_contigs(graph, list_start_node, list_end_node):
+    '''from networkx import algorithms
+    Function
+    - takes a graph, a list of entry nodes and a list of exit nodes
+    - returns a list of tuple (contig, contig_size)
+    '''
+    contigs = []
+    for source in list_start_node :
+        for target in list_end_node :
+            if algorithms.has_path(graph, source, target) == True :
+
+                path = algorithms.shortest_path(graph, source, target)
+                contig = path[0]
+                for i in range(len(path)-1):
+                    contig += path[i+1][-1]
+                contigs.append((contig, len(contig)))
+        return contigs
 
 
 ################################# MAIN ##################################
 file = args.fastq
 
-dic = dico_kmer(file , 10)
+dic = dico_kmer(file , 21)
 print(dic)
 g = build_graph(dic)
 
