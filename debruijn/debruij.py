@@ -37,6 +37,7 @@ def read_fastq(fastq):
 
 
 def cut_kmer(seq, taille_kmer):
+    seq = seq.strip('\n')
     for j in range(len(seq) - taille_kmer + 1):
         yield seq[j:j+taille_kmer]
 
@@ -101,6 +102,7 @@ def get_contigs(graph, list_start_node, list_end_node):
                 contigs.append((contig, len(contig)))
         return contigs
 
+#def save_contigs()
 
 ################################# MAIN ##################################
 if __name__ == '__main__' :
@@ -108,24 +110,17 @@ if __name__ == '__main__' :
     size = args.sKmer
     dic = dico_kmer(file , size)
     print(dic)
-
-
-
-'''
-g = build_graph(dic)
-
-
-entree = starting_nodes(g)
-sortie = sink_nodes(g)
-print('Liste des noeuds d entrée : ')
-print(entree)
-print('\n')
-print('Liste des noeuds de sortie : ')
-print(sortie)
-
-
-#Contigs :
-
-contig = get_contigs(g , entree , sortie)
-print(contig)
-'''
+    print('\n')
+    g = build_graph(dic)
+    entree = starting_nodes(g)
+    sortie = sink_nodes(g)
+    print('Liste des noeuds d entrée : ')
+    print(entree)
+    print('\n')
+    print('Liste des noeuds de sortie : ')
+    print(sortie)
+    print('\n')
+    #Contigs :
+    print('dico CONTIG : ')
+    contig = get_contigs(g , entree , sortie)
+    print(contig)
