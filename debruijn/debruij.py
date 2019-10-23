@@ -102,7 +102,19 @@ def get_contigs(graph, list_start_node, list_end_node):
                 contigs.append((contig, len(contig)))
         return contigs
 
-#def save_contigs()
+def fill(text, width=80):
+    return os.linesep.join(text[i:i+width] for i in range(0, len(text), width))
+
+
+def save_contigs(tuple , output_file):
+    with open (output_file , 'w') as filout :
+        #>contig_Numéro len=longueur du contig
+        for i in range(len(tuple)) :
+            filout.write(' >contig_Numéro %d = %d ', i , tuple[i][1])
+    filout.close()
+
+
+
 
 ################################# MAIN ##################################
 if __name__ == '__main__' :
@@ -121,6 +133,7 @@ if __name__ == '__main__' :
     print(sortie)
     print('\n')
     #Contigs :
-    print('dico CONTIG : ')
+    print('TUPLE CONTIG : ')
     contig = get_contigs(g , entree , sortie)
     print(contig)
+    save_contigs(contig , "lol.txt")
