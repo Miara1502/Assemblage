@@ -8,7 +8,7 @@ from networkx import algorithms
 
 parser = argparse.ArgumentParser(description="Debruij algo, main program.")
 
-parser.add_argument("-i", "--fastq",
+parser.add_argument("-i", "--fastq", type = str ,
                     help='Path to the fastq file single end',
                     dest="fastq", metavar="fastq--file")
 parser.add_argument("-k", "--kmer-size", help="size of the Kmer --DEFAULT = 21",
@@ -29,29 +29,28 @@ args = parser.parse_args()
 
 def read_fastq(fastq):
     fastq_file = open(fastq)
-    for line in fastq_file:
-        yield fastq_file.readline().strip('\n')
-        seq_id = fastq_file.readline()
-        seq = fastq_file.readline().strip('\n')
-    fastq_file.close()
+    lines = iter(fastq_file.readlines())
+    for line in lines :
+        yield next(lines)
+        next(lines)
+        next(lines)
 
-def cut_kmer(fastq, taille_kmer):
-    it = read_fastq(fastq)
-    seq = next(it)
-    for j in range(len(seq) - taille_kmer + 1) :
-        k_mer = seq[j:j+taille_kmer]
-        #print(k_mer)
-        yield(k_mer)
 
-def dico_kmer(fastq , taille_kmer):
-    it = cut_kmer(fastq , taille_kmer)
-    #seq = next(it)
+def cut_kmer(seq, taille_kmer):
+    for j in range(len(seq) - taille_kmer + 1):
+        yield seq[j:j+taille_kmer]
+
+
+def dico_kmer(fastq, taille_kmer):
     dico = {}
-    for kmer in it:
-        if kmer not in dico :
-            dico[kmer] = 0
-        dico[kmer] += 1
+    for seq in read_fastq(fastq):
+        for kmer in cut_kmer(seq, taille_kmer):
+            print(kmer)
+            if kmer not in dico:
+                dico[kmer] = 0
+            dico[kmer] += 1
     return dico
+
 
 ##  b) Construction de l'arbre :
 def build_graph(dico_kmer) :
@@ -81,18 +80,6 @@ def sink_nodes(graph) :
             #print("Pas de successeurs\n")
             list_sortie.append(node)
     return list_sortie
-'''
-def get_contigs(graph , noeud_entre , noeud_sortie) :
-    #Retourne (contig , taille du contig)
-
-    for i in noeud_entre :
-        liste_path = []
-        for j in noeud_sortie :
-            path = list(nx.all_simple_paths(graph , i , j))
-            tuple  = (path , len(path[0]))
-            liste_path.append(tuple)
-    return liste_path
-'''
 
 
 
@@ -116,10 +103,15 @@ def get_contigs(graph, list_start_node, list_end_node):
 
 
 ################################# MAIN ##################################
-file = args.fastq
+if __name__ == '__main__' :
+    file = args.fastq
+    size = args.sKmer
+    dic = dico_kmer(file , size)
+    print(dic)
 
-dic = dico_kmer(file , 21)
-print(dic)
+
+
+'''
 g = build_graph(dic)
 
 
@@ -136,9 +128,4 @@ print(sortie)
 
 contig = get_contigs(g , entree , sortie)
 print(contig)
-'''
-path = list(nx.all_simple_paths(g , entree[0] , sortie[0]))
-
-print(path)
-print(len(path[0]))
 '''
