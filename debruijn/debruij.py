@@ -117,8 +117,71 @@ def save_contigs(Tuple , output_file):
             filout.write('>contig_' + str(i) + ' len=' + str(Tuple[i][1]) + '\n'+ str(fill(Tuple[i][0])) + '\n')
     filout.close()
 
+def std(list_val):
+    """Take list of values and return standard deviation"""
+    return st.stdev(list_val)
 
 
+def path_average_weight(graph, path):
+    """Take a graph and a path and return average weigth"""
+    new_G = graph.subgraph(path)
+    wei = []
+    for arretes in new_G.edges(data=True):
+        wei.append(arretes[2]['weight'])
+    mean_wei = st.mean(wei)
+    return mean_wei
+
+def remove_paths(graph, path, delete_entry_node, delete_sink_node):
+    """Take graph and path and remove (entry or exit) nodes
+    and return a clean graph
+    """
+    new_G = graph
+    for i in range(len(path)):
+        new_G.remove_nodes_from(path[i][1:-1])
+        if delete_entry_node == True:
+            new_G.remove_node(path[i][0])
+        if delete_sink_node == True:
+            new_G.remove_node(path[i][-1])
+    return new_G
+
+def select_best_path(graph, paths, path_len, mean_weights,
+                     delete_entry_node=False, delete_sink_node=False):
+    """
+    take a graph, a list of path , a list with the length of each
+    path , a list of average path and return  a clean graph
+    """
+    max_weight = max(mean_weights)
+    heaviest = [i for i, j in enumerate(mean_weights) if j == mean_weights]
+    if len(heaviest) > 1:
+        max_len = max(path_lengths)
+        longest = [i for i in heaviest if path_len[i] == max_len]
+        if len(longest) > 1:
+            Random.seed(9001)
+            best = random.choice[longest]
+        else:
+            best = longest[0]
+    else:
+        best = heaviest[0]
+    paths.pop(best)
+    return remove_paths(graph, paths, delete_entry_node, delete_sink_node)
+
+def solve_bubble():
+    pass
+
+
+def simplify_bubbles():
+    pass
+
+
+def solve_entry_tips():
+    pass
+
+
+def solve_out_tips():
+    pass
+
+
+################################# MAIN ##################################
 parser = argparse.ArgumentParser(description="Debruij algo, main program.")
 
 parser.add_argument("-i", "--fastq", type = str ,
@@ -129,14 +192,12 @@ parser.add_argument("-k", "--kmer-size", help="size of the Kmer --DEFAULT = 21",
 parser.add_argument("-r", "--reference-genome",
                     help='path to the file containing the reference genome ',
                      dest="geneRef", metavar="reference--genome")
-parser.add_argument("-o", "--config-file",
+parser.add_argument("-o", "--config-file", type = str , 
                     help='path to the file containing the config file ',
-                     dest="config", metavar="config--file")
+                     dest="filename", metavar="config--file")
 
 args = parser.parse_args()
 
-
-################################# MAIN ##################################
 if __name__ == '__main__' :
     file = args.fastq
     size = args.sKmer
@@ -156,4 +217,4 @@ if __name__ == '__main__' :
     print('TUPLE CONTIG : ')
     contig = get_contigs(g , entree , sortie)
     print(contig)
-    save_contigs(contig , "lol.txt")
+    save_contigs(contig , args.filename)
