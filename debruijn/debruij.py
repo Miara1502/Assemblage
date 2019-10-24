@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-import sys
+import sys , os
 import pprint
 import networkx as nx
 from networkx import algorithms
@@ -107,12 +107,16 @@ def fill(text, width=80):
             len(text), width))
 
 
-def save_contigs(tuple , output_file):
-    with open (output_file , 'w') as filout :
+def save_contigs(Tuple , output_file):
+    '''take a tuple and a name of ouotput file
+    and give a file with the list of tuple
+    '''
+    with open (output_file , 'w+') as filout :
         #>contig_Numéro len=longueur du contig
-        for i in range(len(tuple)) :
-            filout.write(' >contig_Numéro %d = %d ', i , tuple[i][1])
+        for i in range(len(Tuple)) :
+            filout.write('>contig_' + str(i) + ' len=' + str(Tuple[i][1]) + '\n'+ str(fill(Tuple[i][0])) + '\n')
     filout.close()
+
 
 
 parser = argparse.ArgumentParser(description="Debruij algo, main program.")
